@@ -1,5 +1,11 @@
 # directories
 /.vs/
+Motus Unity Plugin/.vs/
+Motus Unity Plugin/Motus-1-Plugin/bin/
+Motus Unity Plugin/Motus-1-Plugin/obj/
 
 # files
-Scripts/*.meta/
+Scripts/*.meta
+Scripts/Example Usage Scripts/*.meta
+Scripts/Generic Classes/*.meta
+Scripts/SteamVR/*.meta
