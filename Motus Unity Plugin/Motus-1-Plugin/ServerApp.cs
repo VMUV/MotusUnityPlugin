@@ -6,8 +6,8 @@ namespace Motus_Unity_Plugin
 {
     class ServerApp
     {
-        public const string fname = "C:/Program Files (x86)/VMUV LLC/Motus/Server App CSharp.exe";
-        public const string appName = "Server App CSharp";
+        public const string fname = "C:/Program Files (x86)/VMUV LLC/Motus/Motus Hardware Interface.exe";
+        public const string appName = "Motus Hardware Interface";
         private TraceLogger _traceLogger = new TraceLogger();
         private string _moduleName = "ServerApp";
 

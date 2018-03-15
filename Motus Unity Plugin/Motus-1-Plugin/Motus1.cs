@@ -9,7 +9,7 @@ namespace Motus_Unity_Plugin
     public static class Motus1
     {
         private static bool _isInitalized = false;
-        private static string _versionInfo = "2.0.2";
+        private static string _versionInfo = "2.0.0.3";
 
         public static void Initialize(bool rawDataLog = false)
         {
