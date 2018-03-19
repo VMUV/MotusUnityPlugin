@@ -4,6 +4,7 @@ using Motus_Unity_Plugin.VMUV_Hardware.Motus_1;
 
 public static class MotusInput
 {
+    public const string Version = "1.0.0.1";
     static private Motus_1_MovementVector _vector = new Motus_1_MovementVector();
     static private Motus_1_Platform _platform = new Motus_1_Platform();
     static private Quaternion _steeringOffset = new Quaternion(0, 0, 0, 1);
@@ -38,6 +39,7 @@ public static class MotusInput
         Motus_1_MovementVector local = _vector;
         local.Normalize();
         Vector3 rtn = new Vector3(local.LateralComponent, 0f, local.VerticalComponent);
+        rtn = _inGameOffset * rtn;
 
         if (rtn.magnitude != 0)
         {
@@ -74,12 +76,12 @@ public static class MotusInput
         rotationTrackerEuler.z = 0;
         rotationTracker = Quaternion.Euler(rotationTrackerEuler);
         Quaternion steering = rotationTracker * _steeringOffset;
-        rtn = _inGameOffset * steering;
+        rtn = steering;
         return rtn;
     }
 
     // Use this method to get the easy mode algorithm to trim your motion vector
-    public static Quaternion GetTrim()
+    public static Quaternion GetTrim(Vector3 trans)
     {
         if (_movingStateChange)
         {
@@ -87,11 +89,8 @@ public static class MotusInput
 
             if (_isMoving)
             {
-                Motus_1_MovementVector local = _vector;
-                local.Normalize();
-                Vector3 trans = new Vector3(local.LateralComponent, 0f, local.VerticalComponent);
-                Quaternion motusRot = _inGameOffset * Quaternion.LookRotation(trans);
-                Quaternion deltaQuat = motusRot * GetSteeringOffset();
+                Quaternion motusRot = Quaternion.LookRotation(trans);
+                Quaternion deltaQuat = motusRot * _steeringOffset;
                 float delta = deltaQuat.eulerAngles.y;
                 if (delta > 180f)
                     delta -= 360f;
@@ -133,7 +132,7 @@ public static class MotusInput
     // if you are using GetPlayerRotation() instead
     public static Quaternion GetSteeringOffset()
     {
-        return _inGameOffset * _steeringOffset;
+        return _steeringOffset;
     }
 
     // Use this to calibrate the Motus to the game axes coordinate system

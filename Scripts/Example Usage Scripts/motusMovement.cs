@@ -27,18 +27,16 @@ public class motusMovement : MonoBehaviour
     {
         MotusInput.Update();
 
-        Vector3 trans = MotusInput.GetNormalizedTranslation();
-
         Quaternion tracker = RotationTracker.GetRotation();
-
         if (!_autoOrienter.IsOriented())
             _autoOrienter.Orient(tracker);
 
+        Vector3 trans = MotusInput.GetNormalizedTranslation();
         if (trans.magnitude == 0.0f)
             MotusInput.SetNewSteeringOffset(tracker);
 
         Quaternion rot = MotusInput.GetPlayerRotation(tracker);
-        trans = MotusInput.GetTrim() * trans;
+        trans = MotusInput.GetTrim(trans) * trans;
         trans = rot * trans;
         trans *= speedMultiplier;
         trans += new Vector3(0, -1 * playerGravity, 0);
