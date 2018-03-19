@@ -4,7 +4,7 @@ using Motus_Unity_Plugin.VMUV_Hardware.Motus_1;
 
 public static class MotusInput
 {
-    public const string Version = "1.0.0.0";
+    public const string Version = "1.0.0.1";
     static private Motus_1_MovementVector _vector = new Motus_1_MovementVector();
     static private Motus_1_Platform _platform = new Motus_1_Platform();
     static private Quaternion _steeringOffset = new Quaternion(0, 0, 0, 1);
@@ -132,7 +132,7 @@ public static class MotusInput
     // if you are using GetPlayerRotation() instead
     public static Quaternion GetSteeringOffset()
     {
-        return _inGameOffset * _steeringOffset;
+        return _steeringOffset;
     }
 
     // Use this to calibrate the Motus to the game axes coordinate system

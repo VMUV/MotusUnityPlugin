@@ -1,5 +1,5 @@
 ﻿// un-comment this to use Steam VR tracked objects.
-#define USING_STEAM_VR
+// #define USING_STEAM_VR
 using UnityEngine;
 
 #if USING_STEAM_VR
