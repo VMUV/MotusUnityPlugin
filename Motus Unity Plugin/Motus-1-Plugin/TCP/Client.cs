@@ -1,49 +1,47 @@
-﻿using Motus_Unity_Plugin.Logging;
-using Trace_Logger_CSharp;
-using Comms_Protocol_CSharp;
+﻿using Comms_Protocol_CSharp;
 using VMUV_TCP_CSharp;
 
 namespace Motus_Unity_Plugin.TCP
 {
     static class Client
     {
-        private static SocketWrapper client = new SocketWrapper(Configuration.client);
-        public static bool logRawData = false;
+        private static SocketWrapper _client = new SocketWrapper(Configuration.client);
+        private static DataQueue _queue = new DataQueue();
+        private static Motus_1_RawDataPacket _motus = new Motus_1_RawDataPacket();
+        private static RotationVectorRawDataPacket _rot = new RotationVectorRawDataPacket();
 
         public static void Service()
         {
-            client.ClientStartRead();
-            byte[] dataBytes = client.ClientGetRxData();
-            byte type = client.ClientGetRxType();
-            Motus_1_RawDataPacket packet = new Motus_1_RawDataPacket();
-            if (type == (byte)ValidPacketTypes.motus_1_raw_data_packet)
+            _client.ClientStartRead();
+            if (_client.ClientHasData())
             {
-                packet.Serialize(dataBytes);
-                short[] sData = packet.DeSerialize();
-                int[] data = new int[sData.Length];
-
-                for (int i = 0; i < data.Length; i++)
-                    data[i] = (int)sData[i];
-                DataStorageTable.SetMotus_1_Data(data);
-
-                if (logRawData)
-                {
-                    string msg = data[0].ToString();
-                    for (int i = 1; i < data.Length; i++)
-                        msg += "," + data[i].ToString();
-                    Logger.LogMessage(msg);
-                }
+                _client.ClientGetRxData(_queue);
+                UpdateCurrentValues();
             }
         }
 
-        public static bool HasTraceMessages()
+        private static void UpdateCurrentValues()
         {
-            return client.HasTraceMessages();
-        }
-
-        public static TraceLoggerMessage[] GetTraceMessages()
-        {
-            return client.GetTraceMessages();
+            while (!_queue.IsEmpty())
+            {
+                DataPacket p = _queue.Get();
+                switch (p.Type)
+                {
+                    case ValidPacketTypes.motus_1_raw_data_packet:
+                        _motus.Payload = p.Payload;
+                        short[] rawData = _motus.DeSerialize();
+                        int[] data = new int[rawData.Length];
+                        for (int i = 0; i < rawData.Length; i++)
+                            data[i] = (int)rawData[i];
+                        DataStorageTable.SetMotus_1_Data(data);
+                        break;
+                    case ValidPacketTypes.rotation_vector_raw_data_packet:
+                        _rot.Payload = p.Payload;
+                        float[] q = _rot.DeSerialize();
+                        DataStorageTable.SetQuat(q);
+                        break;
+                }
+            }
         }
     }
 }

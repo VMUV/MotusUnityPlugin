@@ -52,12 +52,11 @@
       <HintPath>..\..\..\TraceLogger\Binaries\Trace Logger CSharp _NET_3_5_0.dll</HintPath>
     </Reference>
     <Reference Include="VMUV TCP CSharp _NET_3_5_0">
-      <HintPath>..\..\..\TCP\Binaries\CSharp NET_3_5_0\VMUV TCP CSharp _NET_3_5_0.dll</HintPath>
+      <HintPath>..\..\..\TCP\Binaries\VMUV TCP CSharp _NET_3_5_0.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DataStorageTable.cs" />
-    <Compile Include="Logging\Logger.cs" />
     <Compile Include="Motus1.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServerApp.cs" />

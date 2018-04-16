@@ -8,12 +8,9 @@ namespace Motus_Unity_Plugin
     {
         public const string fname = "C:/Program Files (x86)/VMUV LLC/Motus/Motus Hardware Interface.exe";
         public const string appName = "Motus Hardware Interface";
-        private TraceLogger _traceLogger = new TraceLogger();
-        private string _moduleName = "ServerApp";
 
         public void LaunchProcess(string name)
         {
-            string methodName = "LaunchProcess";
             try
             {
                 Process process = new Process();
@@ -22,26 +19,16 @@ namespace Motus_Unity_Plugin
             }
             catch (ArgumentNullException e0)
             {
-                _traceLogger.QueueMessage(_traceLogger.BuildMessage(_moduleName, methodName, e0.Message));
+                Logger.LogMessage(e0.Message + e0.StackTrace);
             }
             catch (InvalidOperationException e1)
             {
-                _traceLogger.QueueMessage(_traceLogger.BuildMessage(_moduleName, methodName, e1.Message));
+                Logger.LogMessage(e1.Message + e1.StackTrace);
             }
             catch (System.ComponentModel.Win32Exception e2)
             {
-                _traceLogger.QueueMessage(_traceLogger.BuildMessage(_moduleName, methodName, e2.Message));
+                Logger.LogMessage(e2.Message + e2.StackTrace);
             }
-        }
-
-        public TraceLoggerMessage[] GetTraceLoggerMessages()
-        {
-            return _traceLogger.GetAllMessages();
-        }
-
-        public bool HasTraceLoggerMessages()
-        {
-            return _traceLogger.HasMessages();
         }
     }
 }
