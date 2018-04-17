@@ -2,6 +2,7 @@
 using Motus_Unity_Plugin.VMUV_Hardware.Motus_1;
 using VMUV_TCP_CSharp;
 using Trace_Logger_CSharp;
+using Comms_Protocol_CSharp;
 
 namespace Motus_Unity_Plugin
 {
@@ -40,7 +41,7 @@ namespace Motus_Unity_Plugin
             return DataStorageTable.GetPlatformObject();
         }
 
-        public static float[] GetQuat()
+        public static RotationVector_Quat GetQuat()
         {
             return DataStorageTable.GetQuat();
         }

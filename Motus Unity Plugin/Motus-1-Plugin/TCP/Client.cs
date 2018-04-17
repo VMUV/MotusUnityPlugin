@@ -37,8 +37,7 @@ namespace Motus_Unity_Plugin.TCP
                         break;
                     case ValidPacketTypes.rotation_vector_raw_data_packet:
                         _rot.Payload = p.Payload;
-                        float[] q = _rot.DeSerialize();
-                        DataStorageTable.SetQuat(q);
+                        DataStorageTable.SetQuat(_rot.GetQuat());
                         break;
                 }
             }
