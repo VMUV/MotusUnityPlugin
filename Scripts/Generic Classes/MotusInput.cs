@@ -1,10 +1,14 @@
 ﻿using UnityEngine;
 using Motus_Unity_Plugin;
 using Motus_Unity_Plugin.VMUV_Hardware.Motus_1;
+using Comms_Protocol_CSharp;
 
 public static class MotusInput
 {
     public const string Version = "1.0.0.1";
+    public static RotationInput RotationSource = RotationInput.VMUV_TRACKER;
+    public static UsageMode Usage = UsageMode.CAVE_VR_SYSTEM;
+
     static private Motus_1_MovementVector _vector = new Motus_1_MovementVector();
     static private Motus_1_Platform _platform = new Motus_1_Platform();
     static private Quaternion _steeringOffset = new Quaternion(0, 0, 0, 1);
@@ -12,6 +16,8 @@ public static class MotusInput
     static private Quaternion _trim = new Quaternion(0, 0, 0, 1);
     static private bool _isMoving = false;
     static private bool _movingStateChange = false;
+    static private Quaternion _vmuvTrackerOffset = new Quaternion(0, 0, 0, 1);
+    static private bool _skipNext = false;
 
     // Use this for initialization
     public static void Start()
@@ -23,8 +29,19 @@ public static class MotusInput
     public static void Update()
     {
         Motus1.Service();
-        _vector = Motus1.GetMotionVector();
-        _platform = Motus1.GetRawPlatformData();
+        if (_skipNext)
+        {
+            _vector = new Motus_1_MovementVector();
+            _platform = new Motus_1_Platform();
+            _skipNext = false;
+        }
+        else
+        {
+            _vector = Motus1.GetMotionVector();
+            _platform = Motus1.GetRawPlatformData();
+        }
+        RotationVector_Quat q = Motus1.GetQuat();
+        ProcessVMUVTracker(new Quaternion(q.x, q.y, q.z, q.w));
     }
 
     // Use this to get the _inGameOffset field applied to the motus
@@ -152,4 +169,34 @@ public static class MotusInput
     {
         SnapMotusToGameAxes(Quaternion.Euler(rotationTracker));
     }
+
+    public static void SetVMUVTrackerOffset(Quaternion offset)
+    {
+        _vmuvTrackerOffset = offset;
+        _skipNext = true;
+    }
+
+    private static void ProcessVMUVTracker(Quaternion tracker)
+    {
+        Vector3 vect = tracker.eulerAngles;
+        vect.x = 0f;
+        vect.y = -vect.z;
+        vect.z = 0f;
+        Quaternion rot = Quaternion.Euler(vect);
+        Quaternion vmuv = rot * _vmuvTrackerOffset;
+        if (RotationSource == RotationInput.VMUV_TRACKER)
+            RotationTracker.UpdateRotation(vmuv);
+    }
+}
+
+public enum RotationInput
+{
+    VIVE_TRACKER = 0,
+    VMUV_TRACKER = 1
+}
+
+public enum UsageMode
+{
+    CAVE_VR_SYSTEM = 0,
+    HMD = 1
 }

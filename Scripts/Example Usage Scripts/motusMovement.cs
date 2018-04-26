@@ -13,11 +13,12 @@ public class motusMovement : MonoBehaviour
     public float speedMultiplier = 10f;
     public float playerGravity = 10f;
     private AutoOrienter _autoOrienter = new AutoOrienter();
-    Vector2 touchpad;
 
     void Start()
     {
         //Call to initialize the Motus controller
+        MotusInput.RotationSource = RotationInput.VMUV_TRACKER;
+        MotusInput.Usage = UsageMode.HMD;
         MotusInput.Start();
         playerController = player.GetComponent<CharacterController>();
     }
@@ -28,10 +29,15 @@ public class motusMovement : MonoBehaviour
         MotusInput.Update();
 
         Quaternion tracker = RotationTracker.GetRotation();
-        if (!_autoOrienter.IsOriented())
-            _autoOrienter.Orient(tracker);
-
         Vector3 trans = MotusInput.GetNormalizedTranslation();
+        if (!_autoOrienter.IsOriented())
+        {
+            if (MotusInput.Usage == UsageMode.HMD)
+                _autoOrienter.Orient(tracker, RotationTracker.GetHMD());
+            else
+                _autoOrienter.Orient(tracker);
+        }
+
         if (trans.magnitude == 0.0f)
             MotusInput.SetNewSteeringOffset(tracker);
 
