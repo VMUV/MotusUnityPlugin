@@ -31,19 +31,11 @@ namespace Motus_Unity_Plugin
             Client.Service();
         }
 
-        public static Motus_1_MovementVector GetMotionVector()
+        public static DataQueue GetData()
         {
-            return DataStorageTable.GetMotionInput();
-        }
-
-        public static Motus_1_Platform GetRawPlatformData()
-        {
-            return DataStorageTable.GetPlatformObject();
-        }
-
-        public static RotationVector_Quat GetQuat()
-        {
-            return DataStorageTable.GetQuat();
+            DataQueue rtn = new DataQueue(1024);
+            rtn.TransferAll(Client._queue);
+            return rtn;
         }
     }
 }
