@@ -8,8 +8,6 @@ namespace Motus_Unity_Plugin.TCP
         public static DataQueue _queue = new DataQueue(1024);
 
         private static SocketWrapper _client = new SocketWrapper(Configuration.client);
-        private static Motus_1_RawDataPacket _motus = new Motus_1_RawDataPacket();
-        private static RotationVectorRawDataPacket _rot = new RotationVectorRawDataPacket();
 
         public static void Service()
         {
